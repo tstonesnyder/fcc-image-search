@@ -6,7 +6,7 @@ var Searches = require('../models/searches.js');
 // Use the revealing module pattern:
 function searchHandler () {
   
-  var newSearch = function (req, res) {
+  var newSearch = function (req, res, next) {
     //var appBaseUrl = req.protocol + "://" + req.get('host');
     // console.log(`appUrl = ${appBaseUrl}`);
     // http://clem-tutorial-beg-tstonesnyder.c9users.io
@@ -76,8 +76,9 @@ function searchHandler () {
           
           // Insert the new doc to the db
           newDoc.save(function (err, doc) {
-            if (err) { throw err; }
-            // console.log('  Added to db', newDoc);
+            // if (err) { throw err; }
+            if (err) {return next(err);}
+            
             console.log(`  Added to db: '${newDoc.search_string}' on ${newDoc.date_created}`);
             return;
           });
