@@ -94,21 +94,19 @@ function searchHandler () {
     });
   };
 
-  var getLatestSearches = function (req, res) {
+  var getLatestSearches = function (req, res, next) {
     console.log('Request to get 10 most recent searches');
-    //aggregate.project({})
     Searches
-      // .aggregate({}, { search_string: true, 'new': 'x', date_created: true, _id: false })
+      // CAN'T RELABEL A FIELD WITH find()???
+      // .find({}, { search_string: true, date_created: true, _id: false })
       // .sort({ $natural: -1 })
       // .limit(10)
       // .exec(function (err, result){
       //   if (err) {throw err;}
-        
       //   if (!result || result.length === 0) {
       //     console.log('No searches found in db.');
       //     return res.json({});
       //   }
-        
       //   return res.json(result);
       // });
       
@@ -118,10 +116,12 @@ function searchHandler () {
       // the $sort operation only maintains the top n results as it progresses.
       .aggregate(
         { $sort: { _id: -1 } },
-        { $limit: 10 },
-        { $project: { 'term': '$search_string', 'when': '$date_created', _id: false } },
+        { $limit: 0 },
+        // Don't get error if it doesn't find these fields.
+        { $project: { 'term': '$search_stringx', 'when': '$date_created', _id: false } },
         function (err, result) {
-          if (err) {throw err;}
+          // if (err) {throw err;}
+          if (err) {return next(err);}
           
           if (!result || result.length === 0) {
             console.log('No searches found in db.');
