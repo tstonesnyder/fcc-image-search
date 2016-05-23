@@ -48,5 +48,5 @@ module.exports = function (app) {
   //         return res.json({'error': err.message});
   //     }
   //     // ..
-});
+// });
 };
