@@ -1,7 +1,7 @@
 'use strict';
 var https = require('https');
 
-// var Urls = require('../models/urls.js');
+var Searches = require('../models/searches.js');
 
 // Use the revealing module pattern:
 function searchHandler () {
@@ -47,7 +47,9 @@ function searchHandler () {
           var responseObj = JSON.parse(totalResponse);
           if (!responseObj.items) {
             // No results
-            return res.json({'error': 'No results found'});
+            // return res.json({'error': 'No results found'});
+            // return res.json({});
+            res.json({});
           } else {
             // Reformat the data
             let formattedItems = [];
@@ -61,8 +63,25 @@ function searchHandler () {
               };
               formattedItems.push(item);
             });
-            return res.json(formattedItems);
+            // return res.json(formattedItems);
+            res.json(formattedItems);
           }
+          
+          // Add this search the db:
+          // Create a new document using our Search model:
+          var newDoc = new Searches({
+            'search_string': searchTerm,
+            'user_ip': userIp
+          });
+          
+          // Insert the new doc to the db
+          newDoc.save(function (err, doc) {
+            if (err) { throw err; }
+            // console.log('  Added to db', newDoc);
+            console.log(`  Added to db: '${newDoc.search_string}' on ${newDoc.date_created}`);
+            return;
+          });
+
         })
         .on('error', (e) => {
           console.error(`  Error receiving data: ${e.message}`);
@@ -73,86 +92,47 @@ function searchHandler () {
       console.error(`  Error from GET request: ${e.message}`);
       return res.json({'error': `Error from GET request: ${e.message}`});
     });
-    
-    // var urlNbr;
-    // var urlInfoToReturn = {
-    //   original_url: url,
-    //   short_url: ''
-    // };
-    
-    // Urls
-    //   // CHECK IF THE URL ALREADY EXISTS IN DB:
-    //   .findOne({ 'url': url}, { 'url_nbr': true, '_id': false })
-    //   .exec(function (err, result) {
-    //     if (err) { throw err; }
-        
-    //     if (result) {
-    //       // url already exists in db, so just get its urlNbr
-    //       urlInfoToReturn.short_url = appBaseUrl + '/' + result.url_nbr;
-    //       console.log(`addUrl: URL already stored as urlNbr ${result.url_nbr}`);
-    //       return res.json(urlInfoToReturn);
-    //     }
-        
-    //     // ADD THIS URL TO THE DB:
-    //     Urls
-    //       // Get the max urlNbr in the db:
-    //       // NOTE: With find().limit(1) an array of the 1 doc is returned.
-    //       .find({}, { 'url_nbr': true, '_id': false })
-    //       .sort({ url_nbr: -1 })
-    //       .limit(1)
-    //       .exec(function (err, result) {
-    //         if (err) { throw err; }
-            
-    //         if (!result || result.length === 0) {
-    //           // No docs in the db yet, so start w/ 1.
-    //           urlNbr = 1;
-    //         } else {
-    //           // Increment the max nbr by 1
-    //           urlNbr = result[0].url_nbr + 1;
-    //         }
-
-    //         // Create a new document using our Url model:
-    //         var newDoc = new Urls({
-    //           'url_nbr': urlNbr,
-    //           'url': url
-    //         });
-            
-    //         // Insert the new doc to the db
-    //         newDoc.save(function (err, doc) {
-    //           if (err) { throw err; }
-              
-    //           urlInfoToReturn.short_url = appBaseUrl + '/' + urlNbr;
-    //           console.log(`addUrl: Added URL to db with short_url = ${urlInfoToReturn.short_url}`);
-    //           return res.json(urlInfoToReturn);
-    //         });
-    //       });
-    //   });
   };
 
-  
   var getLatestSearches = function (req, res) {
+    console.log('Request to get 10 most recent searches');
+    //aggregate.project({})
+    Searches
+      // .aggregate({}, { search_string: true, 'new': 'x', date_created: true, _id: false })
+      // .sort({ $natural: -1 })
+      // .limit(10)
+      // .exec(function (err, result){
+      //   if (err) {throw err;}
+        
+      //   if (!result || result.length === 0) {
+      //     console.log('No searches found in db.');
+      //     return res.json({});
+      //   }
+        
+      //   return res.json(result);
+      // });
+      
+      // $sort operator can take advantage of an index when placed at the beginning of the pipeline 
+      // or placed BEFORE the $project, $unwind, and $group aggregation operators.
+      // When a $sort immediately precedes a $limit in the pipeline, 
+      // the $sort operation only maintains the top n results as it progresses.
+      .aggregate(
+        { $sort: { _id: -1 } },
+        { $limit: 10 },
+        { $project: { 'term': '$search_string', 'when': '$date_created', _id: false } },
+        function (err, result) {
+          if (err) {throw err;}
+          
+          if (!result || result.length === 0) {
+            console.log('No searches found in db.');
+            return res.json({});
+          }
+          
+          return res.json(result);
+        }
+      );
   };
-  // // Get a url from the db:
-  // var getUrl = function (req, res) {
-  //   var urlNbr = req.params[0];
-  //   console.log(`getUrl: User request to goto URL nbr ${urlNbr}`);
 
-  //   Urls
-  //     .findOne({ 'url_nbr': urlNbr}, { 'url': true, '_id': false })
-  //     .exec(function (err, result) {
-  //       if (err) {
-  //         throw err;
-  //       }
-        
-  //       if (!result) {
-  //         console.log(`getUrl: No such URL nbr ${urlNbr}. About to return error json.`);
-  //         return res.json({ 'error': 'Invalid url nbr' });
-  //       }
-        
-  //       return res.redirect(result.url);
-  //     });
-  // };
-  
   return {
     newSearch: newSearch,
     getLatestSearches: getLatestSearches
