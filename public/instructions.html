@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API Basejump: Image Search Abstraction Layer</title>
+  <style>
+    code {color: blue;}
+    h3 {margin-bottom: 5px;}
+    li {margin-bottom: 10px;}
+    .code-dynamic {
+      font-style: italic;
+      color: darkblue;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Free Code Camp Assignment</h1>
+  <h2>API Basejump: Image Search Abstraction Layer</h2>
+  <p>User stories:</p>
+  <ul>
+    <li>I can get the image URLs, alt text, and page URLs for a set of images relating to a given search string.</li>
+    <li>I can paginate through the responses by adding a <code>?offset=<span class=code-dynamic>starting-item-nbr</span></code> parameter to the URL.</li>
+    <li>I can get a list of the most recently submitted search strings by using the path <code>/api/latest/imagesearch</code></li>
+  </ul>
+  
+  <h3>Example image search usage:</h3>
+  <code>https://fcc-image-search.herokuapp.com/api/imagesearch/<span class=code-dynamic>searchterm</span></code>
+
+  <h3>Example search output:</h3>
+  <code>{}</code>
+  
+  <h3>Example pagination:</h3>
+  To get the second page of results:
+  <code>https://fcc-image-search.herokuapp.com/api/imagesearch/<span class=code-dynamic>searchterm</span>?offset=10</code>
+  <br>
+  To get the third page of results:
+  <code>https://fcc-image-search.herokuapp.com/api/imagesearch/<span class=code-dynamic>searchterm</span>?offset=20</code>
+
+  <h3>Example list of recent searches:</h3>
+  <code>https://fcc-image-search.herokuapp.com/api/latest/imagesearch</code>
+
+  <h3>Example search list output:</h3>
+  <code>{}</code>
+
+  <br>
+  <p>You can find details for 
+    <a href="https://www.freecodecamp.com/challenges/image-search-abstraction-layer">this assignment</a>
+     at 
+    <a href="https://www.freecodecamp.com">Free Code Camp</a>
+  </p>
+</body>
+</html>
