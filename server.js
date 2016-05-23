@@ -12,12 +12,8 @@ if (app.settings.env === 'development') {
   // ONLY NEED THIS IN DEV (on Heroku will store these)
   require('dotenv').config({path: '/home/ubuntu/private/.env-image-search'});
 }
-if (!process.env.GOOGLE_SEARCH_API_KEY || !process.env.GOOGLE_SEARCH_ENGINE_ID || !process.env.MONGO_URI) {
+if (!process.env.GOOGLE_SEARCH_API_KEY || !process.env.GOOGLE_SEARCH_ENGINE_ID || !process.env.MONGODB_URI) {
   console.error('ERROR: Missing environment variables!');
-  console.error(`process.env.GOOGLE_SEARCH_API_KEY: ${process.env.GOOGLE_SEARCH_API_KEY}`);
-  console.error(`process.env.GOOGLE_SEARCH_ENGINE_ID: ${process.env.GOOGLE_SEARCH_ENGINE_ID}`);
-  console.error(`process.env.MONGO_URI: ${process.env.MONGO_URI}`);
-  console.error (process.env);
   console.dir (process.env);
   process.exit(1);
 }
