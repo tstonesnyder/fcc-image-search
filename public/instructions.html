@@ -28,15 +28,25 @@
   <h3>Example image search usage:</h3>
   <code>https://fcc-image-search.herokuapp.com/api/imagesearch/<span class=code-dynamic>searchterm</span></code>
 
-  <h3>Example search output:</h3>
-  <code>{}</code>
+  <h3>Example image search output (first page of results: items 1-10):</h3>
+  <code>[<br>
+  &nbsp;&nbsp;{<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;link: <span class=code-dynamic>image file URL</span>,<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;snippet: <span class=code-dynamic>image description</span>,<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;size: <span class=code-dynamic>image thumbnail URL</span>,<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;thumbnailLink: <span class=code-dynamic>image file URL</span>,<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;contextLink:  <span class=code-dynamic>URL for page containing image</span>,<br>
+  &nbsp;&nbsp;},<br>
+  &nbsp;&nbsp;...<br>
+  ]</code>
   
   <h3>Example pagination:</h3>
-  To get the second page of results:
-  <code>https://fcc-image-search.herokuapp.com/api/imagesearch/<span class=code-dynamic>searchterm</span>?offset=10</code>
-  <br>
-  To get the third page of results:
-  <code>https://fcc-image-search.herokuapp.com/api/imagesearch/<span class=code-dynamic>searchterm</span>?offset=20</code>
+  <p>To get the second page of results (items 11-20):<br>
+  &nbsp;&nbsp;<code>https://fcc-image-search.herokuapp.com/api/imagesearch/<span class=code-dynamic>searchterm</span>?offset=11</code>
+  </p>
+  <p>To get the third page of results (items 21-30):<br>
+  &nbsp;&nbsp;<code>https://fcc-image-search.herokuapp.com/api/imagesearch/<span class=code-dynamic>searchterm</span>?offset=21</code>
+  </p>
 
   <h3>Example list of recent searches:</h3>
   <code>https://fcc-image-search.herokuapp.com/api/latest/imagesearch</code>
