@@ -23,7 +23,7 @@ var port = process.env.PORT || 8080;
 
 // For communicating with MongoDB:
 var mongoose = require('mongoose');
-mongoose.connect(process.env.MONGO_URI, function (err) {
+mongoose.connect(process.env.MONGODB_URI, function (err) {
   if (err) {
     console.error('ERROR: Could not connect to MongoDB');
     throw err;
