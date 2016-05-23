@@ -9,8 +9,18 @@ var routes = require('./app/routes/index.js');
 
 var app = express();
 
-// ONLY NEED THIS IN DEV (on Heroku will store these)
-require('dotenv').config({path: '/home/ubuntu/private/.env-image-search'});
+console.log(`app.settings.env: ${app.settings.env}`);
+console.log(`process.env.NODE_ENV: ${process.env.NODE_ENV}`);
+if (app.settings.env === 'development') {
+  // ONLY NEED THIS IN DEV (on Heroku will store these)
+  require('dotenv').config({path: '/home/ubuntu/private/.env-image-search'});
+}
+
+if (!process.env.GOOGLE_SEARCH_API_KEY || !process.env.GOOGLE_SEARCH_ENGINE_ID) {
+  console.log('ERROR: Missing environment variables!');
+  process.exit(1);
+}
+
 
 // Use the port that Heroku provides or default to 8080 (for Cloud9):
 var port = process.env.PORT || 8080;

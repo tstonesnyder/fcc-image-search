@@ -15,7 +15,7 @@ function searchHandler () {
     var userIp = req.ip;
     var searchTerm = req.params.searchTerm;
     // var offset = req.query ? req.query.offset : undefined;
-    var startIndex = req.query.offset || 1;
+    var startIndex = req.query.offset || 0;
     console.log(`Request from IP ${userIp} to search for ${searchTerm} starting at ${startIndex}.`);
 
     // &start=starIndex
