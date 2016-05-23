@@ -3,6 +3,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+console.log('running ./app/models/searches.js');
+
 // Create a new Mongoose schema.
 // Each Mongoose schema corresponds to a MongoDB collection. 
 // Each key in the schema defines and casts its corresponding property in the MongoDB document.

@@ -1,7 +1,8 @@
 'use strict';
 var https = require('https');
-
 var Searches = require('../models/searches.js');
+
+console.log('running ./app/controllers/searchHandler.server.js');
 
 // Use the revealing module pattern:
 function searchHandler () {

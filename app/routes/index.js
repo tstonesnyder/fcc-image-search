@@ -1,8 +1,9 @@
 'use strict';
 
+console.log('running ./routes/index.js');
 // This will NOT end in a '/':
 var appCWD = process.cwd();
-console.log(`appCWD = ${appCWD}`);
+console.log(`index.js: appCWD = ${appCWD}`);
 
 var searchHandler = require('../controllers/searchHandler.server.js');
 
