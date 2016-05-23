@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Free Code Camp Image Search Abstraction Layer Assignment",
   "main": "server.js",
+  "engines" : { "node" : "~4.4.3" },
   "scripts": {
     "test": "echo \\\"Error: no test specified\\\" && exit 1",
     "start": "node server.js"
@@ -10,8 +11,8 @@
   "author": "tstonesnyder",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^2.0.0",
-    "express": "^4.13.4",
-    "mongoose": "^4.4.19"
+    "dotenv": "2.0.0",
+    "express": "4.13.4",
+    "mongoose": "4.4.19"
   }
 }

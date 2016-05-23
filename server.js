@@ -14,6 +14,11 @@ if (app.settings.env === 'development') {
 }
 if (!process.env.GOOGLE_SEARCH_API_KEY || !process.env.GOOGLE_SEARCH_ENGINE_ID || !process.env.MONGO_URI) {
   console.error('ERROR: Missing environment variables!');
+  console.error(`process.env.GOOGLE_SEARCH_API_KEY: ${process.env.GOOGLE_SEARCH_API_KEY}`);
+  console.error(`process.env.GOOGLE_SEARCH_ENGINE_ID: ${process.env.GOOGLE_SEARCH_ENGINE_ID}`);
+  console.error(`process.env.MONGO_URI: ${process.env.MONGO_URI}`);
+  console.error (process.env);
+  console.dir (process.env);
   process.exit(1);
 }
 // Use the port that Heroku provides or default to 8080 (for Cloud9):
