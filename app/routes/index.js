@@ -13,22 +13,21 @@ module.exports = function (app) {
     .get(function (req, res) {
       res.sendFile(appCWD + '/public/instructions.html');
     });
-  
+
   // User is initiating a search:
+  // (This accepts any query params. It only uses 'offset', ignores others.)
   app.route('/api/imagesearch/:searchTerm')
-    .get(searchHandler.newSearch);
+    .get(searchHandler.newImageSearch);
   
-  // User wants list of recent searchs:
+  // User wants list of recent searches:
+  // (This accepts any query params. Ignores them all.)
   app.route('/api/latest/imagesearch')
     .get(searchHandler.getLatestSearches);
-
-  // // Trying to create a url with invalid format:
-  // app.route(['/new', '/new/*'])
-  //   .get(function (req, res) {
-  //     console.log(`Request for invalid path: ${req.path}`);
-  //     res.json({ 'error': 'URL is invalid' });
-  //   });
   
+  // Added this for my own use.
+  app.route('/api/searchbydate/:searchTerm')
+    .get(searchHandler.newSearchByDate);
+
   // Trying to go to some other page:
   app.route('*')
     .get(function (req, res) {
@@ -36,6 +35,7 @@ module.exports = function (app) {
       res.status(404).sendFile(appCWD + '/public/404.html');
     });
 
+  // Error handling
   app.use(function(err, req, res, next) {
     if (app.get('env') === 'development') {
       // DEVELOPMENT ERROR HANDLING:

@@ -46,19 +46,55 @@
   </p>
   <p>To get the third page of results (items 21-30):<br>
   &nbsp;&nbsp;<code>https://fcc-image-search.herokuapp.com/api/imagesearch/<span class=code-dynamic>searchterm</span>?offset=21</code>
-  </p>
+  </p><br>
+  
+  <hr />
 
   <h3>Example list of recent searches:</h3>
   <code>https://fcc-image-search.herokuapp.com/api/latest/imagesearch</code>
 
   <h3>Example search list output:</h3>
-  <code>{}</code>
+  <code>[<br>
+  &nbsp;&nbsp;{<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;term: <span class=code-dynamic>"cats"</span>,<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;when: <span class=code-dynamic>"2016-05-23T19:50:59.486Z"</span><br>
+  &nbsp;&nbsp;},<br>
+  &nbsp;&nbsp;{<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;term: <span class=code-dynamic>"dogs"</span>,<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;when: <span class=code-dynamic>"2016-05-22T14:36:40.827Z"</span><br>
+  &nbsp;&nbsp;},<br>
+  &nbsp;&nbsp;...<br>
+  ]</code><br><br>
+  
+  <hr />
+  
+  <h3>Example search-by-date usage:</h3>
+  <p><i>Not part of assignment, added for personal use, not for images, searches not stored.</i></p>
+  <code>https://fcc-image-search.herokuapp.com/api/searchbydate/<span class=code-dynamic>searchterm?days=30?offset=1</span></code>
 
-  <br>
+  <h3>Example search-by-date output:</h3>
+  <code>{<br>
+  &nbsp;&nbsp;searchInformation: {<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;formattedTotalResults: <span class=code-dynamic>total nbr of results</span><br>
+  &nbsp;&nbsp;},<br>
+  &nbsp;&nbsp;items: [<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;{<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;title: <span class=code-dynamic>page title</span>,<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;link: <span class=code-dynamic>page URL</span>,<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;snippet: <span class=code-dynamic>description</span>,<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;},<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;...<br>
+  &nbsp;&nbsp;]<br>
+  &nbsp;&nbsp;next: <span class=code-dynamic>link to next set of results</span><br>
+  }</code><br><br>
+  
+  <hr />
+
   <p>You can find details for 
     <a href="https://www.freecodecamp.com/challenges/image-search-abstraction-layer">this assignment</a>
      at 
     <a href="https://www.freecodecamp.com">Free Code Camp</a>
   </p>
+  <br>
 </body>
 </html>

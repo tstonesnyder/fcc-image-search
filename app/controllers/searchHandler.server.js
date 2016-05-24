@@ -2,28 +2,22 @@
 var https = require('https');
 var Searches = require('../models/searches.js');
 
+const baseHttpReqStr = `https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_SEARCH_API_KEY}&cx=${process.env.GOOGLE_SEARCH_ENGINE_ID}`;
+
 console.log('running ./app/controllers/searchHandler.server.js');
 
-// Use the revealing module pattern:
 function searchHandler () {
   
-  var newSearch = function (req, res, next) {
-    //var appBaseUrl = req.protocol + "://" + req.get('host');
-    // console.log(`appUrl = ${appBaseUrl}`);
-    // http://clem-tutorial-beg-tstonesnyder.c9users.io
-    // http://fcc-api-urlshortener.herokuapp.com
-
+  var newImageSearch = function (req, res, next) {
     var userIp = req.ip;
     var searchTerm = req.params.searchTerm;
     // var offset = req.query ? req.query.offset : undefined;
     var startIndex = req.query.offset || 1;
-    console.log(`Request from IP ${userIp} to search for ${searchTerm} starting at ${startIndex}.`);
+    console.log(`Request from IP ${userIp} to search IMAGES for ${searchTerm} starting at ${startIndex}.`);
 
-    // &start=starIndex
     // const fields = 'searchInformation/formattedTotalResults,queries/request/startIndex,items(title,link,snippet,image/contextLink,image/byteSize,image/thumbnailLink)';
     const fields = 'items(link,snippet,image/contextLink,image/byteSize,image/thumbnailLink)';
-    const httpReqStr = `https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_SEARCH_API_KEY}&cx=${process.env.GOOGLE_SEARCH_ENGINE_ID}&userIP=${userIp}&searchType=image&safe=medium&fields=${fields}&num=10&start=${startIndex}&q=${searchTerm}`;
-    //console.log(httpReqStr);
+    const httpReqStr = `${baseHttpReqStr}&userIP=${userIp}&searchType=image&safe=medium&fields=${fields}&num=10&start=${startIndex}&q=${searchTerm}`;
 
     // Request search results from the Google Custom Search API:
     // This defaults to returning data in JSON format.
@@ -36,7 +30,6 @@ function searchHandler () {
       // Set this so the "data" event will emit Strings rather than Node Buffer objects:
       apiRes.setEncoding('utf8')
         .on('data', (chunk) => {
-          //console.log(`BODY: ${chunk}`);
           nbrChunksSent++;
           totalResponse += chunk;
         })
@@ -49,7 +42,6 @@ function searchHandler () {
           if (!responseObj.items) {
             // No results
             // return res.json({'error': 'No results found'});
-            // return res.json({});
             res.json({});
           } else {
             // Reformat the data
@@ -77,7 +69,6 @@ function searchHandler () {
           
           // Insert the new doc to the db
           newDoc.save(function (err, doc) {
-            // if (err) { throw err; }
             if (err) {return next(err);}
             
             console.log(`  Added to db: '${newDoc.search_string}' on ${newDoc.date_created}`);
@@ -87,11 +78,13 @@ function searchHandler () {
         })
         .on('error', (e) => {
           console.error(`  Error receiving data: ${e.message}`);
+          console.error(e);
           return res.json({'error': `Error receiving data: ${e.message}`});
         });
     })
     .on('error', (e) => {
       console.error(`  Error from GET request: ${e.message}`);
+      console.error(e);
       return res.json({'error': `Error from GET request: ${e.message}`});
     });
   };
@@ -118,11 +111,10 @@ function searchHandler () {
       // the $sort operation only maintains the top n results as it progresses.
       .aggregate(
         { $sort: { _id: -1 } },
-        { $limit: 0 },
-        // Don't get error if it doesn't find these fields.
-        { $project: { 'term': '$search_stringx', 'when': '$date_created', _id: false } },
+        { $limit: 10 },
+        // NOTE: We don't get error if it doesn't find these fields.
+        { $project: { 'term': '$search_string', 'when': '$date_created', _id: false } },
         function (err, result) {
-          // if (err) {throw err;}
           if (err) {return next(err);}
           
           if (!result || result.length === 0) {
@@ -134,10 +126,80 @@ function searchHandler () {
         }
       );
   };
+  
+  var newSearchByDate = function (req, res, next) {
+    const appBaseUrl = req.protocol + "://" + req.get('host');
+    const userIp = req.ip;
+    const searchTerm = req.params.searchTerm;
+    // Default to 365 days if not specified
+    const nbrDays = 'd' + (req.query.days || 365);
+    const fields = req.query.showall ? '' : '&fields=searchInformation/formattedTotalResults,items(title,link,snippet)';
+    var startIndex = req.query.offset || 1;  // will change this below
+    // Added host language = english, and sort by date
+    const httpReqStr = `${baseHttpReqStr}&hl=en&sort=date&userIP=${userIp}&safe=medium${fields}&num=10&q=${searchTerm}&dateRestrict=${nbrDays}&start=${startIndex}`;
+    // NOTE: num must be 1-10
+    console.log(`Request from IP ${userIp} to search by date (${nbrDays}) for ${searchTerm} starting at ${startIndex}.`);
+    console.log(httpReqStr);
+
+    // Request search results from the Google Custom Search API:
+    // This defaults to returning data in JSON format.
+    // Returns an instance of the http.ClientRequest class (a writable stream, which emit events).
+    https.get(httpReqStr, (apiRes) => {
+      var totalResponse = "";
+      var nbrChunksSent = 0;
+      
+      console.log(`  API response status code: ${apiRes.statusCode}`);
+      // Set this so the "data" event will emit Strings rather than Node Buffer objects:
+      apiRes.setEncoding('utf8')
+        .on('data', (chunk) => {
+          nbrChunksSent++;
+          totalResponse += chunk;
+        })
+        .on('end', function () {
+          console.log(`  Response length: ${totalResponse.length}, nbr chunks sent: ${nbrChunksSent}`);
+          // 'totalResponse' will be a string of JSON: 
+          // containing either an empty object '{}\n',
+          // or an object with an 'items' property whose value is an array of objects.
+          var responseObj = JSON.parse(totalResponse);
+          if (!responseObj.items) {
+            // No results
+            return res.json(responseObj);
+          } else {
+            // Do NOT store this search in the DB.
+            // But DO provide a link at bottom to the next query.
+            const regEx = /offset=(\d+)/i;
+            if (!req.originalUrl.match(regEx)) {
+              console.log(req.query);
+              if (Object.keys(req.query).length === 0) {
+                // No query string (query is an empty object), so use '?'
+                responseObj.next = `${appBaseUrl}${req.originalUrl}?offset=11`;
+              } else {
+                responseObj.next = `${appBaseUrl}${req.originalUrl}&offset=11`;
+              }
+            } else {
+              responseObj.next = `${appBaseUrl}${req.originalUrl.replace(regEx, (str, nbr) => `offset=${+nbr + 10}`)}`;
+            }
+            return res.json(responseObj);
+          }
+        })
+        .on('error', (e) => {
+          console.error(`  Error receiving data: ${e.message}`);
+          console.error(e);
+          return res.json({'error': `Error receiving data: ${e.message}`});
+        });
+    })
+    .on('error', (e) => {
+      console.error(`  Error from GET request: ${e.message}`);
+      console.error(e);
+      return res.json({'error': `Error from GET request: ${e.message}`});
+    });
+  };
+
 
   return {
-    newSearch: newSearch,
-    getLatestSearches: getLatestSearches
+    newImageSearch: newImageSearch,
+    getLatestSearches: getLatestSearches,
+    newSearchByDate: newSearchByDate
   };
 }
 
