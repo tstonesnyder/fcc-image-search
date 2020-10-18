@@ -2,17 +2,24 @@
   "name": "fcc-image-search",
   "version": "0.0.1",
   "description": "Free Code Camp Image Search Abstraction Layer Assignment",
+  "author": "tstonesnyder",
+  "license": "ISC",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tstonesnyder/fcc-image-search.git"
+  },
   "main": "server.js",
-  "engines" : { "node" : "~4.4.3" },
+  "engines": {
+    "node": "^12.18.3"
+  },
   "scripts": {
     "test": "echo \\\"Error: no test specified\\\" && exit 1",
     "start": "node server.js"
   },
-  "author": "tstonesnyder",
-  "license": "ISC",
   "dependencies": {
-    "dotenv": "2.0.0",
-    "express": "4.13.4",
-    "mongoose": "4.4.19"
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.10.9"
   }
 }

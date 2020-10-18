@@ -109,11 +109,14 @@ function searchHandler () {
       // or placed BEFORE the $project, $unwind, and $group aggregation operators.
       // When a $sort immediately precedes a $limit in the pipeline, 
       // the $sort operation only maintains the top n results as it progresses.
+      // Add the array for MongoDB 3.6.
       .aggregate(
-        { $sort: { _id: -1 } },
-        { $limit: 10 },
-        // NOTE: We don't get error if it doesn't find these fields.
-        { $project: { 'term': '$search_string', 'when': '$date_created', _id: false } },
+        [
+          { $sort: { _id: -1 } },
+          { $limit: 10 },
+          // NOTE: We don't get error if it doesn't find these fields.
+          { $project: { 'term': '$search_string', 'when': '$date_created', _id: false } },
+        ],
         function (err, result) {
           if (err) {return next(err);}
           
