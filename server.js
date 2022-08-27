@@ -41,8 +41,8 @@ const dbConnectOptions = {
 mongoose.connect(process.env.DB_URI, dbConnectOptions, function (err) {
   if (err) {
     // OTHER WAYS of doing error handling: https://mongoosejs.com/docs/connections.html#error-handling
-    console.error('ERROR: Could not connect to MongoDB!');
-    throw err;
+    console.error('ERROR: Could not connect to MongoDB at Atlas! You may need to logon to Atlas and RESUME the database.', err);
+    process.exit(1);
   }
   console.log('server.js: Connected to MongoDB');
 });
@@ -59,6 +59,6 @@ app.enable('trust proxy');
 routes(app);
   
 app.listen(port, function () {
-  console.log('Listening on port ' + port + '...');
+  console.log('Listening on port ' + port + '. If running locally, go to localhost:' + port);
 });
 

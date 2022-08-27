@@ -26,7 +26,7 @@ function searchHandler () {
       var totalResponse = "";
       var nbrChunksSent = 0;
       
-      console.log(`  API response status code: ${apiRes.statusCode}`);
+      //console.log(`  API response status code: ${apiRes.statusCode}`);
       // Set this so the "data" event will emit Strings rather than Node Buffer objects:
       apiRes.setEncoding('utf8')
         .on('data', (chunk) => {
@@ -34,7 +34,7 @@ function searchHandler () {
           totalResponse += chunk;
         })
         .on('end', function () {
-          console.log(`  Response length: ${totalResponse.length}, nbr chunks sent: ${nbrChunksSent}`);
+          //console.log(`  Response length: ${totalResponse.length}, nbr chunks sent: ${nbrChunksSent}`);
           // 'totalResponse' will be a string of JSON: 
           // containing either an empty object '{}\n',
           // or an object with an 'items' property whose value is an array of objects.
@@ -77,14 +77,14 @@ function searchHandler () {
 
         })
         .on('error', (e) => {
-          console.error(`  Error receiving data: ${e.message}`);
-          console.error(e);
+          console.error(`  Error receiving data: ${e.message}`, e);
+          // console.error(e);
           return res.json({'error': `Error receiving data: ${e.message}`});
         });
     })
     .on('error', (e) => {
-      console.error(`  Error from GET request: ${e.message}`);
-      console.error(e);
+      console.error(`  Error from GET request: ${e.message}`, e);
+      // console.error(e);
       return res.json({'error': `Error from GET request: ${e.message}`});
     });
   };
