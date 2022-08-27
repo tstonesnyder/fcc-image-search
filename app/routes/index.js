@@ -28,6 +28,13 @@ module.exports = function (app) {
   app.route('/api/searchbydate/:searchTerm')
     .get(searchHandler.newSearchByDate);
 
+  // Add a Health Check Path that always returns a 200 OK response (for use by Render):
+  app.route('/health')
+  .get(function (req, res) {
+    console.log(`Request for health check from: ${req.ip}`);
+    res.status(200).send('Ok');
+  });
+
   // Trying to go to some other page:
   app.route('*')
     .get(function (req, res) {
